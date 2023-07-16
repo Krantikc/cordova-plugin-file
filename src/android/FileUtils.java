@@ -467,7 +467,11 @@ public class FileUtils extends CordovaPlugin {
                     String path = args.getString(1);
                     String nativeURL = resolveLocalFileSystemURI(dirname).getString("nativeURL");
                     boolean containsCreate = (args.isNull(2)) ? false : args.getJSONObject(2).optBoolean("create", false);
+                    LOG.d(LOG_TAG, "getDirectory:: nativeURL = " + nativeURL);
 
+                    LOG.d(LOG_TAG, "getDirectory:: containsCreate = " + containsCreate);
+                    LOG.d(LOG_TAG, "getDirectory:: needPermission:WRITE = " + needPermission(nativeURL, WRITE));
+                    LOG.d(LOG_TAG, "getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
                     if(containsCreate && needPermission(nativeURL, WRITE)) {
                         getWritePermission(rawArgs, ACTION_GET_DIRECTORY, callbackContext);
                     }

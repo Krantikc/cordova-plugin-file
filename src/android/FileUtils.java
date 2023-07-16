@@ -608,7 +608,9 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private boolean hasReadPermission() {
+        LOG.d(LOG_TAG, "hasReadPermission::  " );
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            LOG.d(LOG_TAG, "hasReadPermission:: hasPermission:READ = " +  PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_IMAGES));
             return PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_IMAGES) 
             && PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_VIDEO)
             && PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_AUDIO);
@@ -618,7 +620,12 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private boolean hasWritePermission() {
-        return PermissionHelper.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        LOG.d(LOG_TAG, "hasWritePermission::  " );
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return true;
+        } else {
+            return PermissionHelper.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     private boolean needPermission(String nativeURL, int permissionType) throws JSONException {

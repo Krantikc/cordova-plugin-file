@@ -461,6 +461,7 @@ public class FileUtils extends CordovaPlugin {
             }, rawArgs, callbackContext);
         }
         else if (action.equals("getDirectory")) {
+            System.out.println("getDirectory:: :::::::::::: ");
             threadhelper( new FileOp( ){
                 public void run(JSONArray args) throws FileExistsException, IOException, TypeMismatchException, EncodingException, JSONException {
                     String dirname = args.getString(0);
@@ -472,6 +473,7 @@ public class FileUtils extends CordovaPlugin {
                     LOG.d(LOG_TAG, "getDirectory:: containsCreate = " + containsCreate);
                     LOG.d(LOG_TAG, "getDirectory:: needPermission:WRITE = " + needPermission(nativeURL, WRITE));
                     LOG.d(LOG_TAG, "getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
+                    System.out.println("getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
                     if(containsCreate && needPermission(nativeURL, WRITE)) {
                         getWritePermission(rawArgs, ACTION_GET_DIRECTORY, callbackContext);
                     }
@@ -593,6 +595,8 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private void getReadPermission(String rawArgs, int action, CallbackContext callbackContext) {
+        LOG.d(LOG_TAG, "getReadPermission:: :::::::::::: " );
+        System.out.println("getReadPermission:: :::::::::::: ");
         int requestCode = pendingRequests.createRequest(rawArgs, action, callbackContext);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             PermissionHelper.requestPermissions(this, requestCode, 
@@ -603,6 +607,8 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private void getWritePermission(String rawArgs, int action, CallbackContext callbackContext) {
+        LOG.d(LOG_TAG, "getWritePermission:: :::::::::::: " );
+        System.out.println("getWritePermission:: :::::::::::: ");
         int requestCode = pendingRequests.createRequest(rawArgs, action, callbackContext);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         } else {

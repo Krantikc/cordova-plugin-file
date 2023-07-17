@@ -296,8 +296,6 @@ public class FileUtils extends CordovaPlugin {
             return true;
         }
 
-        System.out.println("Which action? :: " + action);
-
         if (action.equals("testSaveLocationExists")) {
             threadhelper(new FileOp() {
                 public void run(JSONArray args) {
@@ -378,7 +376,6 @@ public class FileUtils extends CordovaPlugin {
             }, rawArgs, callbackContext);
         }
         else if (action.equals("write")) {
-            System.out.println("action:: write ");
             threadhelper( new FileOp( ){
                 public void run(JSONArray args) throws JSONException, FileNotFoundException, IOException, NoModificationAllowedException {
                     String fname=args.getString(0);
@@ -464,22 +461,12 @@ public class FileUtils extends CordovaPlugin {
             }, rawArgs, callbackContext);
         }
         else if (action.equals("getDirectory")) {
-            System.out.println("getDirectory:: :::::::::::: ");
             threadhelper( new FileOp( ){
                 public void run(JSONArray args) throws FileExistsException, IOException, TypeMismatchException, EncodingException, JSONException {
                     String dirname = args.getString(0);
                     String path = args.getString(1);
                     String nativeURL = resolveLocalFileSystemURI(dirname).getString("nativeURL");
                     boolean containsCreate = (args.isNull(2)) ? false : args.getJSONObject(2).optBoolean("create", false);
-                    LOG.d(LOG_TAG, "getDirectory:: nativeURL = " + nativeURL);
-
-                    LOG.d(LOG_TAG, "getDirectory:: containsCreate = " + containsCreate);
-                    LOG.d(LOG_TAG, "getDirectory:: needPermission:WRITE = " + needPermission(nativeURL, WRITE));
-                    LOG.d(LOG_TAG, "getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
-                    System.out.println("getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
-                    System.out.println("getDirectory:: needPermission:READ = " + needPermission(nativeURL, READ));
-                    System.out.println("getDirectory:: containsCreate = " + containsCreate);
-                    System.out.println("getDirectory:: needPermission:WRITE = " + needPermission(nativeURL, WRITE));
                     if(containsCreate && needPermission(nativeURL, WRITE)) {
                         getWritePermission(rawArgs, ACTION_GET_DIRECTORY, callbackContext);
                     }
@@ -488,7 +475,6 @@ public class FileUtils extends CordovaPlugin {
                     }
                     else {
                         JSONObject obj = getFile(dirname, path, args.optJSONObject(2), true);
-                        System.out.println("getDirectory:: getFile:= = " + obj.toString());
                         callbackContext.success(obj);
                     }
                 }
@@ -602,8 +588,6 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private void getReadPermission(String rawArgs, int action, CallbackContext callbackContext) {
-        LOG.d(LOG_TAG, "getReadPermission:: :::::::::::: " );
-        System.out.println("getReadPermission:: :::::::::::: ");
         int requestCode = pendingRequests.createRequest(rawArgs, action, callbackContext);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             PermissionHelper.requestPermissions(this, requestCode, 
@@ -614,8 +598,6 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private void getWritePermission(String rawArgs, int action, CallbackContext callbackContext) {
-        LOG.d(LOG_TAG, "getWritePermission:: :::::::::::: " );
-        System.out.println("getWritePermission:: :::::::::::: ");
         int requestCode = pendingRequests.createRequest(rawArgs, action, callbackContext);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         } else {
@@ -624,9 +606,7 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private boolean hasReadPermission() {
-        LOG.d(LOG_TAG, "hasReadPermission::  " );
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            LOG.d(LOG_TAG, "hasReadPermission:: hasPermission:READ = " +  PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_IMAGES));
             return PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_IMAGES) 
             && PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_VIDEO)
             && PermissionHelper.hasPermission(this, Manifest.permission.READ_MEDIA_AUDIO);
@@ -636,10 +616,7 @@ public class FileUtils extends CordovaPlugin {
     }
 
     private boolean hasWritePermission() {
-        LOG.d(LOG_TAG, "hasWritePermission::  " );
-        System.out.println("hasWritePermission:: :::::::::::: ");
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            System.out.println("hasWritePermission:: true ");
             return true;
         } else {
             return PermissionHelper.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -657,18 +634,15 @@ public class FileUtils extends CordovaPlugin {
         
 
         if(permissionType == READ && hasReadPermission()) {
-            System.out.println("permissionType == READ && hasReadPermission():: false ");
             return false;
         }
         else if(permissionType == WRITE && hasWritePermission()) {
-            System.out.println("permissionType == WRITE && hasWritePermission():: false ");
             return false;
         }
 
         // Permission required if the native url lies outside the allowed storage directories
         for(String directory : allowedStorageDirectories) {
             if(nativeURL.startsWith(directory)) {
-                System.out.println("allowedStorageDirectories:: false ");
                 return false;
             }
         }
